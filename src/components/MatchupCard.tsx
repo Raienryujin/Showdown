@@ -54,10 +54,10 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     
     if (!teamId) {
       return (
-        <div className={`flex items-center justify-between p-3.5 bg-neutral-900/50 text-neutral-600 italic text-sm ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
-          <span className="flex items-center gap-2">
-            <ShieldQuestion size={16} className="opacity-50" />
-            TBD / BYE
+        <div className={`flex items-center justify-between px-2.5 h-[32px] bg-neutral-900/50 text-neutral-600 italic text-xs ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
+          <span className="flex items-center gap-1.5">
+            <ShieldQuestion size={14} className="opacity-50" />
+            <span className="truncate">TBD / BYE</span>
           </span>
         </div>
       );
@@ -66,7 +66,7 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     return (
       <div 
         onClick={() => handleVote(teamId)}
-        className={`relative flex items-center justify-between p-3.5 transition-all overflow-hidden
+        className={`relative flex items-center justify-between px-2.5 h-[32px] text-xs transition-all overflow-hidden
           ${!isBottom ? 'border-b border-neutral-800' : ''}
           ${isActive && isLoggedIn ? 'cursor-pointer hover:bg-neutral-800' : ''}
           ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
@@ -84,12 +84,12 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
 
         <div className="flex items-center justify-between w-full relative z-10">
           <span className="truncate font-medium">{teamId}</span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {isActive && totalVotes > 0 && (
-              <span className="text-xs font-bold text-neutral-500">{percentage}%</span>
+              <span className="text-[10px] font-bold text-neutral-500">{percentage}%</span>
             )}
-            {isWinner && <CheckCircle2 size={16} className="text-emerald-500" />}
-            {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
+            {isWinner && <CheckCircle2 size={14} className="text-emerald-500" />}
+            {isSelected && !isWinner && <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
           </div>
         </div>
       </div>
@@ -97,9 +97,9 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
   };
 
   return (
-    <div className="bg-[#121212] rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-neutral-800 overflow-hidden text-sm flex flex-col w-full relative transition-transform hover:-translate-y-0.5 duration-200 group">
+    <div className="bg-[#121212] rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-neutral-800 overflow-hidden flex flex-col w-full relative transition-transform hover:-translate-y-0.5 duration-200 group">
       {isActive && (
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity z-20" />
       )}
       <TeamRow teamId={t1} votes={voteCounts?.team1 || 0} />
       <TeamRow teamId={t2} isBottom votes={voteCounts?.team2 || 0} />
