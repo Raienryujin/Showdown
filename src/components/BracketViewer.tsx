@@ -267,14 +267,14 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
             group.sort((a, b) => (a.next_matchup_slot || 0) - (b.next_matchup_slot || 0))
           );
 
-          const M = 40 * (Math.pow(2, roundNum - 1) - 1);
-          const G = 80 * Math.pow(2, roundNum - 1) - 66;
-          const lineH = 40 * Math.pow(2, roundNum - 1);
+          const M = 50 * (Math.pow(2, roundNum - 1) - 1);
+          const G = 100 * Math.pow(2, roundNum - 1) - 82;
+          const lineH = 50 * Math.pow(2, roundNum - 1);
 
           return (
-            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col w-[160px] min-w-[160px]">
+            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col w-[200px] min-w-[200px]">
               <div className="text-center mb-6">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
                   isCurrentRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
                   : isPastRound ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
                   : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
@@ -298,35 +298,35 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                     {/* Left Side Lines (Point Right) */}
                     {!isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 1 && (
                       <>
-                        <div className="absolute right-[-8px] top-[33px] w-[8px] border-t-2 border-r-2 border-neutral-700/50 rounded-tr-lg pointer-events-none z-0" style={{ height: `${lineH}px` }} />
-                        <div className="absolute right-[-16px] w-[9px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${33 + lineH}px` }} />
+                        <div className="absolute right-[-16px] top-[41px] w-[16px] border-t-2 border-r-2 border-neutral-700/50 rounded-tr-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
+                        <div className="absolute right-[-32px] w-[17px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${41 + lineH}px` }} />
                       </>
                     )}
                     {!isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 2 && (
-                      <div className="absolute right-[-8px] w-[8px] border-b-2 border-r-2 border-neutral-700/50 rounded-br-lg pointer-events-none z-0" style={{ top: `${33 - lineH}px`, height: `${lineH}px` }} />
+                      <div className="absolute right-[-16px] w-[16px] border-b-2 border-r-2 border-neutral-700/50 rounded-br-xl pointer-events-none z-0" style={{ top: `${41 - lineH}px`, height: `${lineH}px` }} />
                     )}
                     {!isRightSide && roundNum === maxRound - 1 && (
-                      <div className="absolute right-[-16px] top-[33px] w-[16px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute right-[-32px] top-[41px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                     {!isRightSide && roundNum < maxRound - 1 && !matchup.next_matchup_slot && (
-                      <div className="absolute right-[-16px] top-[33px] w-[16px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute right-[-32px] top-[41px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
 
                     {/* Right Side Lines (Point Left) */}
                     {isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 1 && (
                       <>
-                        <div className="absolute left-[-8px] top-[33px] w-[8px] border-t-2 border-l-2 border-neutral-700/50 rounded-tl-lg pointer-events-none z-0" style={{ height: `${lineH}px` }} />
-                        <div className="absolute left-[-16px] w-[9px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${33 + lineH}px` }} />
+                        <div className="absolute left-[-16px] top-[41px] w-[16px] border-t-2 border-l-2 border-neutral-700/50 rounded-tl-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
+                        <div className="absolute left-[-32px] w-[17px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${41 + lineH}px` }} />
                       </>
                     )}
                     {isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 2 && (
-                      <div className="absolute left-[-8px] w-[8px] border-b-2 border-l-2 border-neutral-700/50 rounded-bl-lg pointer-events-none z-0" style={{ top: `${33 - lineH}px`, height: `${lineH}px` }} />
+                      <div className="absolute left-[-16px] w-[16px] border-b-2 border-l-2 border-neutral-700/50 rounded-bl-xl pointer-events-none z-0" style={{ top: `${41 - lineH}px`, height: `${lineH}px` }} />
                     )}
                     {isRightSide && roundNum === maxRound - 1 && (
-                      <div className="absolute left-[-16px] top-[33px] w-[16px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute left-[-32px] top-[41px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                     {isRightSide && roundNum < maxRound - 1 && !matchup.next_matchup_slot && (
-                      <div className="absolute left-[-16px] top-[33px] w-[16px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute left-[-32px] top-[41px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                   </div>
                 ))}
@@ -338,42 +338,44 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         const sideRounds = Array.from({ length: maxRound - 1 }, (_, i) => i + 1);
 
         return (
-          <div className="flex gap-4 min-w-max pb-8 pt-4 items-start justify-center overflow-x-auto relative px-4">
-            {/* Left Tree */}
-            <div className="flex gap-4">
-              {sideRounds.map(r => renderColumn(r, false))}
-            </div>
+          <div className="w-full overflow-x-auto pb-8 pt-4 px-4">
+            <div className="flex gap-8 min-w-max mx-auto w-fit items-start">
+              {/* Left Tree */}
+              <div className="flex gap-8">
+                {sideRounds.map(r => renderColumn(r, false))}
+              </div>
 
-            {/* Finals */}
-            {finalsMatchup && (
-              <div className="flex flex-col w-[160px] min-w-[160px]">
-                <div className="text-center mb-6">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
-                    bracket.current_round === maxRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
-                    : bracket.current_round > maxRound ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
-                    : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
-                  }`}>
-                    Finals
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <div className="relative z-10" style={{ marginTop: `${Math.max(0, 40 * (Math.pow(2, maxRound - 2) - 1))}px` }}>
-                    <MatchupCard
-                      matchup={finalsMatchup}
-                      isActive={bracket.current_round === maxRound}
-                      isPast={bracket.current_round > maxRound}
-                      isLoggedIn={isLoggedIn}
-                      initialVote={userVotes[finalsMatchup.id] || null}
-                      voteCounts={voteCounts[finalsMatchup.id] || { team1: 0, team2: 0 }}
-                    />
+              {/* Finals */}
+              {finalsMatchup && (
+                <div className="flex flex-col w-[200px] min-w-[200px]">
+                  <div className="text-center mb-6">
+                    <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                      bracket.current_round === maxRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
+                      : bracket.current_round > maxRound ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
+                      : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
+                    }`}>
+                      Finals
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="relative z-10" style={{ marginTop: `${Math.max(0, 50 * (Math.pow(2, maxRound - 2) - 1))}px` }}>
+                      <MatchupCard
+                        matchup={finalsMatchup}
+                        isActive={bracket.current_round === maxRound}
+                        isPast={bracket.current_round > maxRound}
+                        isLoggedIn={isLoggedIn}
+                        initialVote={userVotes[finalsMatchup.id] || null}
+                        voteCounts={voteCounts[finalsMatchup.id] || { team1: 0, team2: 0 }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Right Tree */}
-            <div className="flex gap-4 flex-row-reverse">
-              {sideRounds.map(r => renderColumn(r, true))}
+              {/* Right Tree */}
+              <div className="flex gap-8 flex-row-reverse">
+                {sideRounds.map(r => renderColumn(r, true))}
+              </div>
             </div>
           </div>
         );
