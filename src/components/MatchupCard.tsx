@@ -18,14 +18,17 @@ interface MatchupCardProps {
   isPast: boolean;
   isLoggedIn: boolean;
   initialVote: string | null;
+  voteCounts?: { team1: number, team2: number };
 }
 
-export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, initialVote }: MatchupCardProps) {
+export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, initialVote, voteCounts }: MatchupCardProps) {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(initialVote);
   const [loading, setLoading] = useState(false);
 
   const t1 = matchup.team1_id;
   const t2 = matchup.team2_id;
+
+  const totalVotes = (voteCounts?.team1 || 0) + (voteCounts?.team2 || 0);
 
   const handleVote = async (teamId: string) => {
     if (!isActive || !teamId || loading) return;
@@ -44,9 +47,10 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     setLoading(false);
   };
 
-  const TeamRow = ({ teamId, isBottom }: { teamId: string | null, isBottom?: boolean }) => {
+  const TeamRow = ({ teamId, isBottom, votes }: { teamId: string | null, isBottom?: boolean, votes: number }) => {
     const isWinner = isPast && matchup.winner_id === teamId;
     const isSelected = selectedTeam === teamId;
+    const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
     
     if (!teamId) {
       return (
@@ -62,7 +66,7 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     return (
       <div 
         onClick={() => handleVote(teamId)}
-        className={`flex items-center justify-between p-3.5 transition-all
+        className={`relative flex items-center justify-between p-3.5 transition-all overflow-hidden
           ${!isBottom ? 'border-b border-neutral-800' : ''}
           ${isActive && isLoggedIn ? 'cursor-pointer hover:bg-neutral-800' : ''}
           ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
@@ -70,9 +74,24 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
           ${isPast && !isWinner ? 'opacity-40 line-through text-neutral-500' : 'text-neutral-300'}
         `}
       >
-        <span className="truncate font-medium">{teamId}</span>
-        {isWinner && <CheckCircle2 size={16} className="text-emerald-500" />}
-        {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
+        {/* Live Vote Progress Bar Background */}
+        {isActive && totalVotes > 0 && (
+          <div 
+            className="absolute top-0 left-0 h-full bg-neutral-800/40 transition-all duration-700 ease-in-out" 
+            style={{ width: `${percentage}%` }}
+          />
+        )}
+
+        <div className="flex items-center justify-between w-full relative z-10">
+          <span className="truncate font-medium">{teamId}</span>
+          <div className="flex items-center gap-2">
+            {isActive && totalVotes > 0 && (
+              <span className="text-xs font-bold text-neutral-500">{percentage}%</span>
+            )}
+            {isWinner && <CheckCircle2 size={16} className="text-emerald-500" />}
+            {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
+          </div>
+        </div>
       </div>
     );
   };
@@ -82,8 +101,8 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
       {isActive && (
         <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
       )}
-      <TeamRow teamId={t1} />
-      <TeamRow teamId={t2} isBottom />
+      <TeamRow teamId={t1} votes={voteCounts?.team1 || 0} />
+      <TeamRow teamId={t2} isBottom votes={voteCounts?.team2 || 0} />
     </div>
   );
 }

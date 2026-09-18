@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MatchupCard from './MatchupCard';
 import { endRound } from '@/app/actions/bracket';
 import { PlayCircle, ShieldAlert } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 type Bracket = {
   id: string;
@@ -29,15 +30,53 @@ interface BracketViewerProps {
   isCreator: boolean;
   isLoggedIn: boolean;
   userVotes: Record<string, string>;
+  initialVoteCounts: Record<string, { team1: number, team2: number }>;
 }
 
-export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn, userVotes }: BracketViewerProps) {
+export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn, userVotes, initialVoteCounts }: BracketViewerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
+  // Realtime Vote Counts State
+  const [voteCounts, setVoteCounts] = useState(initialVoteCounts);
+
   // Tie-Breaker State
   const [tiedMatchupIds, setTiedMatchupIds] = useState<string[]>([]);
   const [tieOverrides, setTieOverrides] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    // Subscribe to inserts on the votes table
+    const channel = supabase
+      .channel('public:votes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'votes' },
+        (payload) => {
+          const newVote = payload.new;
+          
+          // Only update if it's for a matchup in our bracket
+          const matchup = matchups.find(m => m.id === newVote.matchup_id);
+          if (matchup) {
+            setVoteCounts(prev => {
+              const currentCounts = prev[matchup.id] || { team1: 0, team2: 0 };
+              const updatedCounts = { ...currentCounts };
+              
+              if (newVote.voted_for_id === matchup.team1_id) updatedCounts.team1++;
+              if (newVote.voted_for_id === matchup.team2_id) updatedCounts.team2++;
+              
+              return { ...prev, [matchup.id]: updatedCounts };
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [matchups]);
 
   // Group matchups by round
   const maxRound = Math.max(...matchups.map(m => m.round_number));
@@ -196,6 +235,7 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                     isPast={isPastRound}
                     isLoggedIn={isLoggedIn}
                     initialVote={userVotes[matchup.id] || null}
+                    voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
                   />
                 ))}
               </div>

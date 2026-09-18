@@ -38,17 +38,35 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
   const isCreator = authData?.user?.id === bracket.creator_id;
 
   let userVotes: Record<string, string> = {};
-  if (isLoggedIn) {
-    const { data: votes } = await supabase
-      .from('votes')
-      .select('matchup_id, voted_for_id')
-      .eq('user_id', authData.user.id);
+  let initialVoteCounts: Record<string, { team1: number, team2: number }> = {};
+  
+  // Initialize counts to 0 for all matchups
+  matchups.forEach(m => {
+    initialVoteCounts[m.id] = { team1: 0, team2: 0 };
+  });
+
+  const matchupIds = matchups.map(m => m.id);
+  
+  // Fetch ALL votes for these matchups
+  const { data: allVotes } = await supabase
+    .from('votes')
+    .select('matchup_id, voted_for_id, user_id')
+    .in('matchup_id', matchupIds);
+
+  if (allVotes) {
+    allVotes.forEach(vote => {
+      // Find the matchup to know which team is which
+      const m = matchups.find(match => match.id === vote.matchup_id);
+      if (m) {
+        if (vote.voted_for_id === m.team1_id) initialVoteCounts[m.id].team1++;
+        if (vote.voted_for_id === m.team2_id) initialVoteCounts[m.id].team2++;
+      }
       
-    if (votes) {
-      votes.forEach(v => {
-        userVotes[v.matchup_id] = v.voted_for_id;
-      });
-    }
+      // If this vote belongs to the logged-in user, track it
+      if (isLoggedIn && vote.user_id === authData?.user?.id) {
+        userVotes[vote.matchup_id] = vote.voted_for_id;
+      }
+    });
   }
 
   return (
@@ -89,6 +107,7 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
             isCreator={isCreator} 
             isLoggedIn={isLoggedIn}
             userVotes={userVotes}
+            initialVoteCounts={initialVoteCounts}
           />
         </div>
       </div>
