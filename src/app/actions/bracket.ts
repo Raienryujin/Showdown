@@ -62,11 +62,11 @@ export async function createBracket(name: string, teams: string[]) {
     next_matchup_slot: null,
   });
 
-  let currentRoundNodes = [finalsId];
+  let currentRoundNodes: string[] = [finalsId];
 
   // Work backwards from Semifinals to Round 1
   for (let r = numRounds - 1; r >= 1; r--) {
-    const nextRoundNodes = [];
+    const nextRoundNodes: string[] = [];
     
     for (const parentId of currentRoundNodes) {
       // Slot 1 child
