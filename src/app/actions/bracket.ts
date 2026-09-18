@@ -9,6 +9,14 @@ import { randomUUID } from 'crypto';
  * @param teams - An array of team names/IDs
  */
 export async function createBracket(name: string, teams: string[]) {
+  if (teams.length > 64) {
+    return { status: 'ERROR', message: 'Maximum of 64 teams allowed' };
+  }
+  const allowedSizes = [2, 4, 8, 16, 32, 64];
+  if (!allowedSizes.includes(teams.length)) {
+    return { status: 'ERROR', message: 'Tournament size must be exactly 2, 4, 8, 16, 32, or 64' };
+  }
+
   const supabase = await createClient();
 
   // 1. Verify User
