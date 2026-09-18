@@ -47,29 +47,38 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
   useEffect(() => {
     const supabase = createClient();
     
-    // Subscribe to inserts on the votes table
+    const fetchMatchupVotes = async (matchupId: string) => {
+      // Only refetch if it's a matchup we actually care about
+      const m = matchups.find(match => match.id === matchupId);
+      if (!m) return;
+
+      const { data } = await supabase
+        .from('votes')
+        .select('voted_for_id')
+        .eq('matchup_id', matchupId);
+        
+      if (data) {
+        let t1 = 0; let t2 = 0;
+        data.forEach(v => {
+          if (v.voted_for_id === m.team1_id) t1++;
+          if (v.voted_for_id === m.team2_id) t2++;
+        });
+        setVoteCounts(prev => ({ ...prev, [m.id]: { team1: t1, team2: t2 } }));
+      }
+    };
+
+    // Subscribe to both INSERT and UPDATE (since changing a vote is an UPSERT)
     const channel = supabase
       .channel('public:votes')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'votes' },
-        (payload) => {
-          const newVote = payload.new;
-          
-          // Only update if it's for a matchup in our bracket
-          const matchup = matchups.find(m => m.id === newVote.matchup_id);
-          if (matchup) {
-            setVoteCounts(prev => {
-              const currentCounts = prev[matchup.id] || { team1: 0, team2: 0 };
-              const updatedCounts = { ...currentCounts };
-              
-              if (newVote.voted_for_id === matchup.team1_id) updatedCounts.team1++;
-              if (newVote.voted_for_id === matchup.team2_id) updatedCounts.team2++;
-              
-              return { ...prev, [matchup.id]: updatedCounts };
-            });
-          }
-        }
+        (payload) => fetchMatchupVotes(payload.new.matchup_id)
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'votes' },
+        (payload) => fetchMatchupVotes(payload.new.matchup_id)
       )
       .subscribe();
 
