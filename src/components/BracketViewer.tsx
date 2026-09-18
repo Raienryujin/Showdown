@@ -56,8 +56,8 @@ export default function BracketViewer({ bracket, matchups, isCreator }: BracketV
   return (
     <div className="w-full">
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 border border-red-200 flex items-center gap-3 shadow-sm">
-          <ShieldAlert className="text-red-500" />
+        <div className="bg-red-500/10 text-red-400 p-4 rounded-xl mb-8 border border-red-500/20 flex items-center gap-3 shadow-sm">
+          <ShieldAlert className="text-red-400" />
           <span className="font-medium">{error}</span>
         </div>
       )}
@@ -67,7 +67,7 @@ export default function BracketViewer({ bracket, matchups, isCreator }: BracketV
           <button
             onClick={handleEndRound}
             disabled={loading || bracket.current_round > maxRound}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-white hover:bg-neutral-200 text-neutral-950 font-semibold py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="animate-pulse">Processing...</span>
@@ -90,12 +90,12 @@ export default function BracketViewer({ bracket, matchups, isCreator }: BracketV
           return (
             <div key={roundNum} className="flex flex-col gap-8 min-w-[260px]">
               <div className="text-center mb-2">
-                <span className={`text-sm font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
                   isCurrentRound 
-                    ? 'bg-indigo-100 text-indigo-700' 
+                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
                     : isPastRound 
-                      ? 'bg-gray-100 text-gray-500' 
-                      : 'bg-gray-50 text-gray-400'
+                      ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
+                      : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
                 }`}>
                   Round {roundNum}
                 </span>

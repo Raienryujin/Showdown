@@ -44,7 +44,7 @@ export default function MatchupCard({ matchup, isActive, isPast }: MatchupCardPr
     
     if (!teamId) {
       return (
-        <div className={`flex items-center justify-between p-3.5 bg-gray-50/50 text-gray-400 italic text-sm ${!isBottom ? 'border-b border-gray-100' : ''}`}>
+        <div className={`flex items-center justify-between p-3.5 bg-neutral-900/50 text-neutral-600 italic text-sm ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
           <span className="flex items-center gap-2">
             <ShieldQuestion size={16} className="opacity-50" />
             TBD / BYE
@@ -57,24 +57,24 @@ export default function MatchupCard({ matchup, isActive, isPast }: MatchupCardPr
       <div 
         onClick={() => handleVote(teamId)}
         className={`flex items-center justify-between p-3.5 transition-all
-          ${!isBottom ? 'border-b border-gray-100' : ''}
-          ${isActive ? 'cursor-pointer hover:bg-indigo-50/50' : ''}
-          ${isSelected ? 'bg-indigo-50 border-l-4 border-l-indigo-500' : 'border-l-4 border-l-transparent'}
-          ${isWinner ? 'bg-emerald-50/50 font-bold text-emerald-900 border-l-emerald-500' : ''}
-          ${isPast && !isWinner ? 'opacity-40 line-through text-gray-500' : 'text-gray-700'}
+          ${!isBottom ? 'border-b border-neutral-800' : ''}
+          ${isActive ? 'cursor-pointer hover:bg-neutral-800' : ''}
+          ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
+          ${isWinner ? 'bg-emerald-500/10 font-bold text-emerald-400 border-l-emerald-500' : ''}
+          ${isPast && !isWinner ? 'opacity-40 line-through text-neutral-500' : 'text-neutral-300'}
         `}
       >
         <span className="truncate font-medium">{teamId}</span>
-        {isWinner && <CheckCircle2 size={16} className="text-emerald-600" />}
-        {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-500" />}
+        {isWinner && <CheckCircle2 size={16} className="text-emerald-500" />}
+        {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
       </div>
     );
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-[0_2px_10px_rgb(0,0,0,0.04)] border border-gray-200 overflow-hidden text-sm flex flex-col w-[260px] relative transition-transform hover:-translate-y-0.5 duration-200">
+    <div className="bg-[#121212] rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-neutral-800 overflow-hidden text-sm flex flex-col w-[260px] relative transition-transform hover:-translate-y-0.5 duration-200 group">
       {isActive && (
-        <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-500" />
+        <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
       )}
       <TeamRow teamId={t1} />
       <TeamRow teamId={t2} isBottom />
