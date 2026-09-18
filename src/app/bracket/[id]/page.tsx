@@ -5,6 +5,28 @@ import LogoutButton from '@/components/LogoutButton';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const { data: bracket } = await supabase
+    .from('brackets')
+    .select('name')
+    .eq('id', id)
+    .single();
+
+  if (!bracket) {
+    return { title: 'Tournament Not Found - Showdown Maker' };
+  }
+
+  return {
+    title: `Vote in: ${bracket.name} | Showdown Maker`,
+    description: `Cast your vote and decide the winner of ${bracket.name}!`,
+  };
+}
+
 export default async function BracketPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
