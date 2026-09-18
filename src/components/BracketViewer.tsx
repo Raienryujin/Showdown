@@ -272,9 +272,9 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
           const lineH = 60 * Math.pow(2, roundNum - 1);
 
           return (
-            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col w-[260px] min-w-[260px]">
+            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col w-[280px] min-w-[280px]">
               <div className="text-center mb-6">
-                <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
+                <span className={`text-base font-bold uppercase tracking-wider px-4 py-2 rounded-full ${
                   isCurrentRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
                   : isPastRound ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
                   : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
@@ -347,9 +347,9 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
 
               {/* Finals */}
               {finalsMatchup && (
-                <div className="flex flex-col w-[260px] min-w-[260px]">
+                <div className="flex flex-col w-[280px] min-w-[280px]">
                   <div className="text-center mb-6">
-                    <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
+                    <span className={`text-base font-bold uppercase tracking-wider px-4 py-2 rounded-full ${
                       bracket.current_round === maxRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
                       : bracket.current_round > maxRound ? 'bg-neutral-800 text-neutral-500 border border-neutral-700' 
                       : 'bg-neutral-900 text-neutral-600 border border-neutral-800'
