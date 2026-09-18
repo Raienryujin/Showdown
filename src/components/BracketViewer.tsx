@@ -67,7 +67,7 @@ export default function BracketViewer({ bracket, matchups, isCreator }: BracketV
           <button
             onClick={handleEndRound}
             disabled={loading || bracket.current_round > maxRound}
-            className="flex items-center gap-2 bg-white hover:bg-neutral-200 text-neutral-950 font-semibold py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-semibold py-2.5 px-5 rounded-xl transition-all shadow-lg shadow-indigo-500/20 border border-indigo-400/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="animate-pulse">Processing...</span>
