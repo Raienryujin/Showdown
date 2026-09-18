@@ -93,7 +93,7 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] p-6 sm:p-10 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
-      <div className="max-w-[1400px] mx-auto">
+      <div className="w-full mx-auto">
         
         <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-indigo-400 transition-colors mb-8">
           <Home size={16} /> Back to Dashboard
