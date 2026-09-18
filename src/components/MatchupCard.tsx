@@ -16,10 +16,12 @@ interface MatchupCardProps {
   matchup: Matchup;
   isActive: boolean;
   isPast: boolean;
+  isLoggedIn: boolean;
+  initialVote: string | null;
 }
 
-export default function MatchupCard({ matchup, isActive, isPast }: MatchupCardProps) {
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, initialVote }: MatchupCardProps) {
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(initialVote);
   const [loading, setLoading] = useState(false);
 
   const t1 = matchup.team1_id;
@@ -27,6 +29,10 @@ export default function MatchupCard({ matchup, isActive, isPast }: MatchupCardPr
 
   const handleVote = async (teamId: string) => {
     if (!isActive || !teamId || loading) return;
+    if (!isLoggedIn) {
+      alert("You must be logged in to vote!");
+      return;
+    }
     
     setLoading(true);
     const result = await castVote(matchup.id, teamId);
@@ -58,7 +64,7 @@ export default function MatchupCard({ matchup, isActive, isPast }: MatchupCardPr
         onClick={() => handleVote(teamId)}
         className={`flex items-center justify-between p-3.5 transition-all
           ${!isBottom ? 'border-b border-neutral-800' : ''}
-          ${isActive ? 'cursor-pointer hover:bg-neutral-800' : ''}
+          ${isActive && isLoggedIn ? 'cursor-pointer hover:bg-neutral-800' : ''}
           ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
           ${isWinner ? 'bg-emerald-500/10 font-bold text-emerald-400 border-l-emerald-500' : ''}
           ${isPast && !isWinner ? 'opacity-40 line-through text-neutral-500' : 'text-neutral-300'}

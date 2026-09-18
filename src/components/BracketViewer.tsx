@@ -27,9 +27,11 @@ interface BracketViewerProps {
   bracket: Bracket;
   matchups: Matchup[];
   isCreator: boolean;
+  isLoggedIn: boolean;
+  userVotes: Record<string, string>;
 }
 
-export default function BracketViewer({ bracket, matchups, isCreator }: BracketViewerProps) {
+export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn, userVotes }: BracketViewerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -108,6 +110,8 @@ export default function BracketViewer({ bracket, matchups, isCreator }: BracketV
                     matchup={matchup}
                     isActive={isCurrentRound}
                     isPast={isPastRound}
+                    isLoggedIn={isLoggedIn}
+                    initialVote={userVotes[matchup.id] || null}
                   />
                 ))}
               </div>

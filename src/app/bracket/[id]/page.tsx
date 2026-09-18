@@ -33,7 +33,22 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
   }
 
   const { data: authData } = await supabase.auth.getUser();
+  const isLoggedIn = !!authData?.user;
   const isCreator = authData?.user?.id === bracket.creator_id;
+
+  let userVotes: Record<string, string> = {};
+  if (isLoggedIn) {
+    const { data: votes } = await supabase
+      .from('votes')
+      .select('matchup_id, voted_for_id')
+      .eq('user_id', authData.user.id);
+      
+    if (votes) {
+      votes.forEach(v => {
+        userVotes[v.matchup_id] = v.voted_for_id;
+      });
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] p-6 sm:p-10 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
@@ -48,11 +63,18 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
             <h1 className="text-4xl font-extrabold text-white tracking-tight">{bracket.name}</h1>
             <p className="text-neutral-400 mt-2 font-medium">Tournament Stage: <span className="text-indigo-400">Round {bracket.current_round}</span></p>
           </div>
-          {isCreator && (
-            <div className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm">
-              Host / Creator Mode
-            </div>
-          )}
+          <div className="flex gap-3">
+            {!isLoggedIn && (
+              <div className="bg-neutral-800 text-neutral-300 px-4 py-1.5 rounded-full text-sm font-semibold border border-neutral-700">
+                Viewing Only (Sign in to vote)
+              </div>
+            )}
+            {isCreator && (
+              <div className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm">
+                Host Mode
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="bg-[#121212] p-8 rounded-2xl shadow-2xl border border-neutral-800 overflow-x-auto relative">
@@ -61,6 +83,8 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
             bracket={bracket} 
             matchups={matchups} 
             isCreator={isCreator} 
+            isLoggedIn={isLoggedIn}
+            userVotes={userVotes}
           />
         </div>
       </div>
