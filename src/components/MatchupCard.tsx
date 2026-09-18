@@ -97,7 +97,7 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
   };
 
   return (
-    <div className="bg-[#121212] rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-neutral-800 overflow-hidden text-sm flex flex-col w-[260px] relative transition-transform hover:-translate-y-0.5 duration-200 group">
+    <div className="bg-[#121212] rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.2)] border border-neutral-800 overflow-hidden text-sm flex flex-col w-full relative transition-transform hover:-translate-y-0.5 duration-200 group">
       {isActive && (
         <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
       )}

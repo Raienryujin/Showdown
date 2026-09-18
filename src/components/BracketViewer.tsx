@@ -272,7 +272,7 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
           const lineH = 61 * Math.pow(2, roundNum - 1);
 
           return (
-            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col min-w-[260px]">
+            <div key={`${isRightSide ? 'R' : 'L'}-${roundNum}`} className="flex flex-col w-[220px] min-w-[220px]">
               <div className="text-center mb-6">
                 <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
                   isCurrentRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
@@ -298,35 +298,35 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                     {/* Left Side Lines (Point Right) */}
                     {!isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 1 && (
                       <>
-                        <div className="absolute right-[-24px] top-[49px] w-[24px] border-t-2 border-r-2 border-neutral-700/50 rounded-tr-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
-                        <div className="absolute right-[-48px] w-[24px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${49 + lineH}px` }} />
+                        <div className="absolute right-[-16px] top-[49px] w-[16px] border-t-2 border-r-2 border-neutral-700/50 rounded-tr-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
+                        <div className="absolute right-[-32px] w-[17px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${49 + lineH}px` }} />
                       </>
                     )}
                     {!isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 2 && (
-                      <div className="absolute right-[-24px] w-[24px] border-b-2 border-r-2 border-neutral-700/50 rounded-br-xl pointer-events-none z-0" style={{ top: `${49 - lineH}px`, height: `${lineH}px` }} />
+                      <div className="absolute right-[-16px] w-[16px] border-b-2 border-r-2 border-neutral-700/50 rounded-br-xl pointer-events-none z-0" style={{ top: `${49 - lineH}px`, height: `${lineH}px` }} />
                     )}
                     {!isRightSide && roundNum === maxRound - 1 && (
-                      <div className="absolute right-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute right-[-32px] top-[49px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                     {!isRightSide && roundNum < maxRound - 1 && !matchup.next_matchup_slot && (
-                      <div className="absolute right-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute right-[-32px] top-[49px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
 
                     {/* Right Side Lines (Point Left) */}
                     {isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 1 && (
                       <>
-                        <div className="absolute left-[-24px] top-[49px] w-[24px] border-t-2 border-l-2 border-neutral-700/50 rounded-tl-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
-                        <div className="absolute left-[-48px] w-[24px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${49 + lineH}px` }} />
+                        <div className="absolute left-[-16px] top-[49px] w-[16px] border-t-2 border-l-2 border-neutral-700/50 rounded-tl-xl pointer-events-none z-0" style={{ height: `${lineH}px` }} />
+                        <div className="absolute left-[-32px] w-[17px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" style={{ top: `${49 + lineH}px` }} />
                       </>
                     )}
                     {isRightSide && roundNum < maxRound - 1 && matchup.next_matchup_slot === 2 && (
-                      <div className="absolute left-[-24px] w-[24px] border-b-2 border-l-2 border-neutral-700/50 rounded-bl-xl pointer-events-none z-0" style={{ top: `${49 - lineH}px`, height: `${lineH}px` }} />
+                      <div className="absolute left-[-16px] w-[16px] border-b-2 border-l-2 border-neutral-700/50 rounded-bl-xl pointer-events-none z-0" style={{ top: `${49 - lineH}px`, height: `${lineH}px` }} />
                     )}
                     {isRightSide && roundNum === maxRound - 1 && (
-                      <div className="absolute left-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute left-[-32px] top-[49px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                     {isRightSide && roundNum < maxRound - 1 && !matchup.next_matchup_slot && (
-                      <div className="absolute left-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      <div className="absolute left-[-32px] top-[49px] w-[32px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                   </div>
                 ))}
@@ -338,15 +338,15 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         const sideRounds = Array.from({ length: maxRound - 1 }, (_, i) => i + 1);
 
         return (
-          <div className="flex gap-12 min-w-max pb-8 pt-4 items-start justify-center overflow-x-auto relative px-8">
+          <div className="flex gap-8 min-w-max pb-8 pt-4 items-start justify-center overflow-x-auto relative px-8">
             {/* Left Tree */}
-            <div className="flex gap-12">
+            <div className="flex gap-8">
               {sideRounds.map(r => renderColumn(r, false))}
             </div>
 
             {/* Finals */}
             {finalsMatchup && (
-              <div className="flex flex-col min-w-[260px]">
+              <div className="flex flex-col w-[220px] min-w-[220px]">
                 <div className="text-center mb-6">
                   <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
                     bracket.current_round === maxRound ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
@@ -372,7 +372,7 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
             )}
 
             {/* Right Tree */}
-            <div className="flex gap-12 flex-row-reverse">
+            <div className="flex gap-8 flex-row-reverse">
               {sideRounds.map(r => renderColumn(r, true))}
             </div>
           </div>
