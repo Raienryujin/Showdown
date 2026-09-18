@@ -1,6 +1,132 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { randomUUID } from 'crypto';
+
+/**
+ * Creates a bracket and pre-allocates the entire tournament tree.
+ * @param name - The name of the bracket
+ * @param teams - An array of team names/IDs
+ */
+export async function createBracket(name: string, teams: string[]) {
+  const supabase = await createClient();
+
+  // 1. Verify User
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { status: 'ERROR', message: 'Unauthorized' };
+  }
+  const userId = userData.user.id;
+
+  // 2. Insert the Bracket to get its ID
+  const { data: bracket, error: bracketError } = await supabase
+    .from('brackets')
+    .insert({
+      name,
+      creator_id: userId,
+      current_round: 1,
+    })
+    .select('id')
+    .single();
+
+  if (bracketError || !bracket) {
+    console.error('Bracket Creation Error:', bracketError);
+    return { status: 'ERROR', message: 'Failed to create bracket' };
+  }
+
+  const bracketId = bracket.id;
+
+  // 3. Generate the Tournament Tree
+  // Pad teams to the nearest power of 2
+  const power = Math.ceil(Math.log2(teams.length || 1));
+  const numTeams = Math.pow(2, power);
+  
+  const paddedTeams = [...teams];
+  while (paddedTeams.length < numTeams) {
+    paddedTeams.push(''); // Empty string will represent a BYE (using null can cause type mapping issues in JSON/SQL sometimes)
+  }
+
+  const numRounds = power;
+  const matchupsToInsert: any[] = [];
+  
+  // Create the final match first
+  const finalsId = randomUUID();
+  matchupsToInsert.push({
+    id: finalsId,
+    bracket_id: bracketId,
+    round_number: numRounds,
+    team1_id: null,
+    team2_id: null,
+    winner_id: null,
+    next_matchup_id: null,
+    next_matchup_slot: null,
+  });
+
+  let currentRoundNodes = [finalsId];
+
+  // Work backwards from Semifinals to Round 1
+  for (let r = numRounds - 1; r >= 1; r--) {
+    const nextRoundNodes = [];
+    
+    for (const parentId of currentRoundNodes) {
+      // Slot 1 child
+      const child1Id = randomUUID();
+      matchupsToInsert.push({
+        id: child1Id,
+        bracket_id: bracketId,
+        round_number: r,
+        team1_id: null,
+        team2_id: null,
+        winner_id: null,
+        next_matchup_id: parentId,
+        next_matchup_slot: 1,
+      });
+      nextRoundNodes.push(child1Id);
+
+      // Slot 2 child
+      const child2Id = randomUUID();
+      matchupsToInsert.push({
+        id: child2Id,
+        bracket_id: bracketId,
+        round_number: r,
+        team1_id: null,
+        team2_id: null,
+        winner_id: null,
+        next_matchup_id: parentId,
+        next_matchup_slot: 2,
+      });
+      nextRoundNodes.push(child2Id);
+    }
+    currentRoundNodes = nextRoundNodes;
+  }
+
+  // 4. Assign teams to the first round
+  // Find all round 1 matchups in the array
+  const round1Matchups = matchupsToInsert.filter((m) => m.round_number === 1);
+  
+  // Assign teams sequentially (for basic seeding, you'd sort paddedTeams differently first)
+  let teamIndex = 0;
+  for (const matchup of round1Matchups) {
+    const t1 = paddedTeams[teamIndex++];
+    const t2 = paddedTeams[teamIndex++];
+    matchup.team1_id = t1 || null; // convert empty strings back to null
+    matchup.team2_id = t2 || null;
+  }
+
+  // 5. Bulk insert the matchups
+  const { error: matchupsError } = await supabase
+    .from('matchups')
+    .insert(matchupsToInsert);
+
+  if (matchupsError) {
+    console.error('Matchups Insertion Error:', matchupsError);
+    // Cleanup the bracket since matchup creation failed
+    await supabase.from('brackets').delete().eq('id', bracketId);
+    return { status: 'ERROR', message: 'Failed to generate bracket tree' };
+  }
+
+  return { status: 'SUCCESS', bracketId };
+}
 
 export async function endRound(bracketId: string) {
   const supabase = await createClient();
