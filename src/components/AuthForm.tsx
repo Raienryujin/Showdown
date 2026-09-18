@@ -21,10 +21,10 @@ export default function AuthForm() {
     
     const result = await action(formData);
 
-    if (result?.error) {
-      setError(result.error);
-    } else if (result?.message) {
-      setMessage(result.message);
+    if (result && 'error' in result && result.error) {
+      setError(result.error as string);
+    } else if (result && 'message' in result && result.message) {
+      setMessage(result.message as string);
     }
     
     setLoading(false);
