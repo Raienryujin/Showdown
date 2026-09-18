@@ -215,15 +215,28 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         </div>
       )}
 
-      <div className="flex gap-12 min-w-max pb-8 pt-4 items-center justify-start overflow-x-auto">
+      <div className="flex gap-12 min-w-max pb-8 pt-4 items-stretch justify-start overflow-x-auto relative">
         {rounds.map(roundNum => {
           const roundMatchups = matchups.filter(m => m.round_number === roundNum);
           const isCurrentRound = roundNum === bracket.current_round;
           const isPastRound = roundNum < bracket.current_round;
 
+          // Group matchups by next_matchup_id so we can draw lines between siblings
+          const groupedObj = roundMatchups.reduce((acc, m) => {
+            const key = m.next_matchup_id || 'final';
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(m);
+            return acc;
+          }, {} as Record<string, Matchup[]>);
+
+          // Ensure siblings are ordered top-to-bottom
+          const groups = Object.values(groupedObj).map(group => 
+            group.sort((a, b) => (a.next_matchup_slot || 0) - (b.next_matchup_slot || 0))
+          );
+
           return (
-            <div key={roundNum} className="flex flex-col gap-8 min-w-[260px]">
-              <div className="text-center mb-2">
+            <div key={roundNum} className="flex flex-col min-w-[260px]">
+              <div className="text-center mb-6">
                 <span className={`text-sm font-bold uppercase tracking-wider px-4 py-1.5 rounded-full ${
                   isCurrentRound 
                     ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' 
@@ -235,17 +248,33 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                 </span>
               </div>
               
-              <div className="flex flex-col gap-6 flex-1 justify-around">
-                {roundMatchups.map(matchup => (
-                  <MatchupCard
-                    key={matchup.id}
-                    matchup={matchup}
-                    isActive={isCurrentRound}
-                    isPast={isPastRound}
-                    isLoggedIn={isLoggedIn}
-                    initialVote={userVotes[matchup.id] || null}
-                    voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
-                  />
+              <div className="flex flex-col flex-1 justify-around gap-6">
+                {groups.map((group, idx) => (
+                  <div key={idx} className="relative flex flex-col justify-around h-full gap-6">
+                    {group.map(matchup => (
+                      <div key={matchup.id} className="relative z-10">
+                        <MatchupCard
+                          matchup={matchup}
+                          isActive={isCurrentRound}
+                          isPast={isPastRound}
+                          isLoggedIn={isLoggedIn}
+                          initialVote={userVotes[matchup.id] || null}
+                          voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
+                        />
+                      </div>
+                    ))}
+
+                    {/* Bracket Connector Lines */}
+                    {roundNum < maxRound && group.length === 2 && (
+                      <>
+                        <div className="absolute right-[-24px] top-[49px] bottom-[49px] w-[24px] border-r-2 border-y-2 border-neutral-700/50 rounded-r-xl pointer-events-none z-0" />
+                        <div className="absolute right-[-48px] top-1/2 w-[24px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                      </>
+                    )}
+                    {roundNum < maxRound && group.length === 1 && (
+                      <div className="absolute right-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
