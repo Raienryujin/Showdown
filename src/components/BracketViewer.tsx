@@ -215,13 +215,13 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         </div>
       )}
 
-      <div className="flex gap-12 min-w-max pb-8 pt-4 items-stretch justify-start overflow-x-auto relative">
+      <div className="flex gap-12 min-w-max pb-8 pt-4 items-start justify-start overflow-x-auto relative">
         {rounds.map(roundNum => {
           const roundMatchups = matchups.filter(m => m.round_number === roundNum);
           const isCurrentRound = roundNum === bracket.current_round;
           const isPastRound = roundNum < bracket.current_round;
 
-          // Group matchups by next_matchup_id so we can draw lines between siblings
+          // Group by parent so we can order siblings correctly
           const groupedObj = roundMatchups.reduce((acc, m) => {
             const key = m.next_matchup_id || 'final';
             if (!acc[key]) acc[key] = [];
@@ -229,10 +229,14 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
             return acc;
           }, {} as Record<string, Matchup[]>);
 
-          // Ensure siblings are ordered top-to-bottom
-          const groups = Object.values(groupedObj).map(group => 
+          const sortedMatchups = Object.values(groupedObj).flatMap(group => 
             group.sort((a, b) => (a.next_matchup_slot || 0) - (b.next_matchup_slot || 0))
           );
+
+          // Exact mathematical layout constants
+          const M = 61 * (Math.pow(2, roundNum - 1) - 1); // Top margin for first card
+          const G = 122 * Math.pow(2, roundNum - 1) - 98; // Gap between cards
+          const lineH = 61 * Math.pow(2, roundNum - 1);   // Vertical line height
 
           return (
             <div key={roundNum} className="flex flex-col min-w-[260px]">
@@ -248,30 +252,42 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                 </span>
               </div>
               
-              <div className="flex flex-col flex-1 justify-around gap-6">
-                {groups.map((group, idx) => (
-                  <div key={idx} className="relative flex flex-col justify-around h-full gap-6">
-                    {group.map(matchup => (
-                      <div key={matchup.id} className="relative z-10">
-                        <MatchupCard
-                          matchup={matchup}
-                          isActive={isCurrentRound}
-                          isPast={isPastRound}
-                          isLoggedIn={isLoggedIn}
-                          initialVote={userVotes[matchup.id] || null}
-                          voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
-                        />
-                      </div>
-                    ))}
+              <div className="flex flex-col">
+                {sortedMatchups.map((matchup, idx) => (
+                  <div 
+                    key={matchup.id} 
+                    className="relative z-10"
+                    style={{ marginTop: idx === 0 ? `${M}px` : `${G}px` }}
+                  >
+                    <MatchupCard
+                      matchup={matchup}
+                      isActive={isCurrentRound}
+                      isPast={isPastRound}
+                      isLoggedIn={isLoggedIn}
+                      initialVote={userVotes[matchup.id] || null}
+                      voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
+                    />
 
                     {/* Bracket Connector Lines */}
-                    {roundNum < maxRound && group.length === 2 && (
+                    {roundNum < maxRound && matchup.next_matchup_slot === 1 && (
                       <>
-                        <div className="absolute right-[-24px] top-[49px] bottom-[49px] w-[24px] border-r-2 border-y-2 border-neutral-700/50 rounded-r-xl pointer-events-none z-0" />
-                        <div className="absolute right-[-48px] top-1/2 w-[24px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
+                        <div 
+                          className="absolute right-[-24px] top-[49px] w-[24px] border-t-2 border-r-2 border-neutral-700/50 rounded-tr-xl pointer-events-none z-0" 
+                          style={{ height: `${lineH}px` }} 
+                        />
+                        <div 
+                          className="absolute right-[-48px] w-[24px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" 
+                          style={{ top: `${49 + lineH}px` }} 
+                        />
                       </>
                     )}
-                    {roundNum < maxRound && group.length === 1 && (
+                    {roundNum < maxRound && matchup.next_matchup_slot === 2 && (
+                      <div 
+                        className="absolute right-[-24px] w-[24px] border-b-2 border-r-2 border-neutral-700/50 rounded-br-xl pointer-events-none z-0" 
+                        style={{ top: `${49 - lineH}px`, height: `${lineH}px` }} 
+                      />
+                    )}
+                    {roundNum < maxRound && !matchup.next_matchup_slot && (
                       <div className="absolute right-[-48px] top-[49px] w-[48px] h-[2px] bg-neutral-700/50 pointer-events-none z-0" />
                     )}
                   </div>
