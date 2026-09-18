@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import CreateBracketForm from '@/components/CreateBracketForm';
 import AuthForm from '@/components/AuthForm';
 import MyBracketsList from '@/components/MyBracketsList';
+import LogoutButton from '@/components/LogoutButton';
 import Link from 'next/link';
 import { Trophy, Calendar } from 'lucide-react';
 
@@ -51,6 +52,7 @@ export default async function Home() {
                   <span className="text-sm font-medium text-neutral-500">
                     Logged in as <strong className="text-neutral-300">{user.email}</strong>
                   </span>
+                  <LogoutButton />
                 </div>
                 <CreateBracketForm />
                 <MyBracketsList brackets={myBrackets} />

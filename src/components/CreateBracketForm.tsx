@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBracket } from '@/app/actions/bracket';
 import { Plus, Trash2, Trophy, ArrowRight, Loader2 } from 'lucide-react';
-import { logout } from '@/app/actions/auth';
 
 export default function CreateBracketForm() {
   const router = useRouter();
@@ -69,13 +68,6 @@ export default function CreateBracketForm() {
           </div>
           Create Tournament
         </h2>
-        
-        <button 
-          onClick={() => logout()} 
-          className="text-sm font-medium text-neutral-400 hover:text-white transition-colors"
-        >
-          Sign Out
-        </button>
       </div>
 
       {error && (

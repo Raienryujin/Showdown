@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import BracketViewer from '@/components/BracketViewer';
+import LogoutButton from '@/components/LogoutButton';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
@@ -63,7 +64,10 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
             <h1 className="text-4xl font-extrabold text-white tracking-tight">{bracket.name}</h1>
             <p className="text-neutral-400 mt-2 font-medium">Tournament Stage: <span className="text-indigo-400">Round {bracket.current_round}</span></p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            {isLoggedIn && (
+              <LogoutButton />
+            )}
             {!isLoggedIn && (
               <div className="bg-neutral-800 text-neutral-300 px-4 py-1.5 rounded-full text-sm font-semibold border border-neutral-700">
                 Viewing Only (Sign in to vote)
