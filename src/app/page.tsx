@@ -1,13 +1,14 @@
 import { createClient } from '@/utils/supabase/server';
 import CreateBracketForm from '@/components/CreateBracketForm';
 import AuthForm from '@/components/AuthForm';
+import MyBracketsList from '@/components/MyBracketsList';
 import Link from 'next/link';
 import { Trophy, Calendar } from 'lucide-react';
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  const user = data?.user;
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData?.user;
 
   // Fetch the latest 5 public brackets
   const { data: recentBrackets } = await supabase
@@ -15,6 +16,17 @@ export default async function Home() {
     .select('id, name, current_round, created_at')
     .order('created_at', { ascending: false })
     .limit(5);
+
+  // Fetch the user's personal brackets if logged in
+  let myBrackets: any[] = [];
+  if (user) {
+    const { data } = await supabase
+      .from('brackets')
+      .select('id, name, current_round, created_at')
+      .eq('creator_id', user.id)
+      .order('created_at', { ascending: false });
+    myBrackets = data || [];
+  }
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] flex flex-col items-center py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
@@ -29,7 +41,7 @@ export default async function Home() {
           Create multi-tenant brackets, invite your friends, and vote asynchronously to declare the ultimate winner.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start text-left">
           
           {/* Left Column: Creator / Auth */}
           <div className="w-full flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -41,6 +53,7 @@ export default async function Home() {
                   </span>
                 </div>
                 <CreateBracketForm />
+                <MyBracketsList brackets={myBrackets} />
               </>
             ) : (
               <AuthForm />

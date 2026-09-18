@@ -231,3 +231,26 @@ export async function endRound(bracketId: string) {
 
   return { status: 'SUCCESS' };
 }
+
+export async function deleteBracket(bracketId: string) {
+  const supabase = await createClient();
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { status: 'ERROR', message: 'Unauthorized' };
+  }
+  const userId = userData.user.id;
+
+  const { error } = await supabase
+    .from('brackets')
+    .delete()
+    .eq('id', bracketId)
+    .eq('creator_id', userId);
+
+  if (error) {
+    console.error('Delete Bracket Error:', error);
+    return { status: 'ERROR', message: 'Failed to delete bracket' };
+  }
+
+  return { status: 'SUCCESS' };
+}
