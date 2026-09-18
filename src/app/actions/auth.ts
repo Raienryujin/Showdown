@@ -38,7 +38,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  return { success: true, message: 'Check your email to confirm your account (if email confirmations are enabled in Supabase).' };
+  return { success: true, message: 'Check your email to confirm your account.' };
 }
 
 export async function logout() {
