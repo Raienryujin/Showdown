@@ -128,7 +128,7 @@ export async function createBracket(name: string, teams: string[]) {
   return { status: 'SUCCESS', bracketId };
 }
 
-export async function endRound(bracketId: string) {
+export async function endRound(bracketId: string, tieOverrides?: Record<string, string>) {
   const supabase = await createClient();
 
   // 1. Verify User
@@ -203,7 +203,11 @@ export async function endRound(bracketId: string) {
 
     // Tie logic
     if (team1Votes === team2Votes) {
-      tiedMatchups.push(matchup.id);
+      if (tieOverrides && tieOverrides[matchup.id]) {
+        winners.push({ matchup_id: matchup.id, winner_id: tieOverrides[matchup.id] });
+      } else {
+        tiedMatchups.push(matchup.id);
+      }
     } else {
       const winnerId = team1Votes > team2Votes ? matchup.team1_id! : matchup.team2_id!;
       winners.push({ matchup_id: matchup.id, winner_id: winnerId });
