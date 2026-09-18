@@ -54,9 +54,9 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     
     if (!teamId) {
       return (
-        <div className={`flex items-center justify-between px-3 h-[40px] bg-neutral-900/50 text-neutral-600 italic text-sm ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
-          <span className="flex items-center gap-2">
-            <ShieldQuestion size={16} className="opacity-50" />
+        <div className={`flex items-center justify-between px-4 h-[48px] bg-neutral-900/50 text-neutral-600 italic text-base ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
+          <span className="flex items-center gap-2.5">
+            <ShieldQuestion size={18} className="opacity-50" />
             <span className="truncate">TBD / BYE</span>
           </span>
         </div>
@@ -66,7 +66,7 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     return (
       <div 
         onClick={() => handleVote(teamId)}
-        className={`relative flex items-center justify-between px-3 h-[40px] text-sm transition-all overflow-hidden
+        className={`relative flex items-center justify-between px-4 h-[48px] text-base transition-all overflow-hidden
           ${!isBottom ? 'border-b border-neutral-800' : ''}
           ${isActive && isLoggedIn ? 'cursor-pointer hover:bg-neutral-800' : ''}
           ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
@@ -84,11 +84,11 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
 
         <div className="flex items-center justify-between w-full relative z-10">
           <span className="truncate font-medium">{teamId}</span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {isActive && totalVotes > 0 && (
-              <span className="text-xs font-bold text-neutral-500">{percentage}%</span>
+              <span className="text-sm font-bold text-neutral-500">{percentage}%</span>
             )}
-            {isWinner && <CheckCircle2 size={16} className="text-emerald-500" />}
+            {isWinner && <CheckCircle2 size={18} className="text-emerald-500" />}
             {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
           </div>
         </div>
