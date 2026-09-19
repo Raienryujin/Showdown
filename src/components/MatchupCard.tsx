@@ -54,9 +54,9 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     
     if (!teamId) {
       return (
-        <div className={`flex items-center justify-between px-4 h-[48px] bg-neutral-900/50 text-neutral-600 italic text-lg ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
-          <span className="flex items-center gap-3">
-            <ShieldQuestion size={20} className="opacity-50" />
+        <div className={`flex items-center justify-between px-3.5 h-[44px] bg-neutral-900/50 text-neutral-600 italic text-base ${!isBottom ? 'border-b border-neutral-800' : ''}`}>
+          <span className="flex items-center gap-2.5">
+            <ShieldQuestion size={18} className="opacity-50" />
             <span className="truncate">TBD / BYE</span>
           </span>
         </div>
@@ -66,12 +66,12 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
     return (
       <div 
         onClick={() => handleVote(teamId)}
-        className={`relative flex items-center justify-between px-4 h-[48px] text-lg transition-all overflow-hidden
+        className={`relative flex items-center justify-between px-3.5 h-[44px] text-base transition-all overflow-hidden
           ${!isBottom ? 'border-b border-neutral-800' : ''}
           ${isActive && isLoggedIn ? 'cursor-pointer hover:bg-neutral-800' : ''}
           ${isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-400' : 'border-l-4 border-l-transparent'}
           ${isWinner ? 'bg-emerald-500/10 text-emerald-400 border-l-emerald-500' : ''}
-          ${isPast && !isWinner ? 'opacity-40 line-through text-neutral-500' : 'text-neutral-200'}
+          ${isPast && !isWinner ? 'opacity-40 line-through text-neutral-500' : 'text-neutral-300'}
         `}
       >
         {/* Live Vote Progress Bar Background */}
@@ -83,13 +83,13 @@ export default function MatchupCard({ matchup, isActive, isPast, isLoggedIn, ini
         )}
 
         <div className="flex items-center justify-between w-full relative z-10">
-          <span className="truncate font-semibold tracking-wide pr-2">{teamId}</span>
-          <div className="flex items-center gap-3 shrink-0">
+          <span className="truncate font-semibold pr-2">{teamId}</span>
+          <div className="flex items-center gap-2.5 shrink-0">
             {isActive && totalVotes > 0 && (
-              <span className="text-base font-bold text-neutral-400">{percentage}%</span>
+              <span className="text-sm font-bold text-neutral-400">{percentage}%</span>
             )}
-            {isWinner && <CheckCircle2 size={20} className="text-emerald-500" />}
-            {isSelected && !isWinner && <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.8)]" />}
+            {isWinner && <CheckCircle2 size={18} className="text-emerald-500" />}
+            {isSelected && !isWinner && <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />}
           </div>
         </div>
       </div>
