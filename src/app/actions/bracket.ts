@@ -266,3 +266,63 @@ export async function deleteBracket(bracketId: string) {
 
   return { status: 'SUCCESS' };
 }
+
+export async function updateRoundOneMatchup(matchupId: string, team1: string | null, team2: string | null) {
+  const supabase = await createClient();
+
+  // 1. Verify User
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { status: 'ERROR', message: 'Unauthorized' };
+  }
+  const userId = userData.user.id;
+
+  // 2. Fetch Matchup and Bracket details
+  const { data: matchup, error: matchupError } = await supabase
+    .from('matchups')
+    .select('round_number, brackets!inner(creator_id, current_round)')
+    .eq('id', matchupId)
+    .single();
+
+  if (matchupError || !matchup) {
+    return { status: 'ERROR', message: 'Matchup not found' };
+  }
+
+  // Cast bracket association (Supabase inner join)
+  const bracket = matchup.brackets as any;
+
+  if (bracket.creator_id !== userId) {
+    return { status: 'ERROR', message: 'Only the creator can edit matchups' };
+  }
+
+  if (matchup.round_number !== 1) {
+    return { status: 'ERROR', message: 'Only Round 1 matchups can be edited' };
+  }
+
+  // 3. Update the matchup
+  const { error: updateError } = await supabase
+    .from('matchups')
+    .update({ 
+      team1_id: team1 || null, 
+      team2_id: team2 || null 
+    })
+    .eq('id', matchupId);
+
+  if (updateError) {
+    console.error('Update Matchup Error:', updateError);
+    return { status: 'ERROR', message: 'Failed to update matchup' };
+  }
+
+  // 4. Delete existing votes for this matchup
+  const { error: deleteVotesError } = await supabase
+    .from('votes')
+    .delete()
+    .eq('matchup_id', matchupId);
+
+  if (deleteVotesError) {
+    console.error('Delete Votes Error:', deleteVotesError);
+    return { status: 'ERROR', message: 'Failed to clear existing votes' };
+  }
+
+  return { status: 'SUCCESS' };
+}

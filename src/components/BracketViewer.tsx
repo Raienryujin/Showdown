@@ -5,6 +5,7 @@ import MatchupCard from './MatchupCard';
 import { endRound } from '@/app/actions/bracket';
 import { PlayCircle, ShieldAlert } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 type Bracket = {
   id: string;
@@ -34,6 +35,7 @@ interface BracketViewerProps {
 }
 
 export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn, userVotes, initialVoteCounts }: BracketViewerProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -293,6 +295,8 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                       isLoggedIn={isLoggedIn}
                       initialVote={userVotes[matchup.id] || null}
                       voteCounts={voteCounts[matchup.id] || { team1: 0, team2: 0 }}
+                      isCreator={isCreator}
+                      onMatchupUpdated={() => router.refresh()}
                     />
 
                     {/* Left Side Lines (Point Right) */}
@@ -366,6 +370,8 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
                         isLoggedIn={isLoggedIn}
                         initialVote={userVotes[finalsMatchup.id] || null}
                         voteCounts={voteCounts[finalsMatchup.id] || { team1: 0, team2: 0 }}
+                        isCreator={isCreator}
+                        onMatchupUpdated={() => router.refresh()}
                       />
                     </div>
                   </div>
