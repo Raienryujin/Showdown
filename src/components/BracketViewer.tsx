@@ -223,6 +223,26 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         const leftSideIds = new Set<string>();
         const rightSideIds = new Set<string>();
 
+        // Recursive function to get ordered matchups for a specific round on a specific side
+        const getOrderedMatchups = (startMatchupId: string, targetRound: number, currentRound: number): Matchup[] => {
+          const m = matchups.find(match => match.id === startMatchupId);
+          if (!m) return [];
+
+          if (currentRound === targetRound) {
+            return [m];
+          }
+          
+          const children = matchups.filter(match => match.next_matchup_id === startMatchupId);
+          const child1 = children.find(match => match.next_matchup_slot === 1);
+          const child2 = children.find(match => match.next_matchup_slot === 2);
+          
+          let result: Matchup[] = [];
+          if (child1) result = result.concat(getOrderedMatchups(child1.id, targetRound, currentRound - 1));
+          if (child2) result = result.concat(getOrderedMatchups(child2.id, targetRound, currentRound - 1));
+          
+          return result;
+        };
+
         if (finalsMatchup && maxRound > 1) {
           const leftSemi = matchups.find(m => m.next_matchup_id === finalsMatchup.id && m.next_matchup_slot === 1);
           const rightSemi = matchups.find(m => m.next_matchup_id === finalsMatchup.id && m.next_matchup_slot === 2);
@@ -252,22 +272,16 @@ export default function BracketViewer({ bracket, matchups, isCreator, isLoggedIn
         }
 
         const renderColumn = (roundNum: number, isRightSide: boolean) => {
-          const roundMatchups = matchups.filter(m => m.round_number === roundNum && (isRightSide ? rightSideIds.has(m.id) : leftSideIds.has(m.id)));
-          if (roundMatchups.length === 0) return null;
+          if (!finalsMatchup || maxRound <= 1) return null;
+
+          const rootSemi = matchups.find(m => m.next_matchup_id === finalsMatchup.id && m.next_matchup_slot === (isRightSide ? 2 : 1));
+          if (!rootSemi) return null;
+
+          const sortedMatchups = getOrderedMatchups(rootSemi.id, roundNum, maxRound - 1);
+          if (sortedMatchups.length === 0) return null;
 
           const isCurrentRound = roundNum === bracket.current_round;
           const isPastRound = roundNum < bracket.current_round;
-
-          const groupedObj = roundMatchups.reduce((acc, m) => {
-            const key = m.next_matchup_id || 'final';
-            if (!acc[key]) acc[key] = [];
-            acc[key].push(m);
-            return acc;
-          }, {} as Record<string, Matchup[]>);
-
-          const sortedMatchups = Object.values(groupedObj).flatMap(group => 
-            group.sort((a, b) => (a.next_matchup_slot || 0) - (b.next_matchup_slot || 0))
-          );
 
           const M = 60 * (Math.pow(2, roundNum - 1) - 1);
           const G = 120 * Math.pow(2, roundNum - 1) - 90;
